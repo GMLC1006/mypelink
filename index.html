@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MYPElink — Sistema RPA para propuestas al Estado</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+:root{
+  --bg-primary:#ffffff;
+  --bg-secondary:#f7f6f3;
+  --bg-tertiary:#f0eeea;
+  --text-primary:#1a1a1a;
+  --text-secondary:#5f5e5a;
+  --text-tertiary:#888780;
+  --border:#e8e7e0;
+  --blue:#185FA5;
+  --teal:#0f6e56;
+  --amber:#854f0b;
+  --green:#1D9E75;
+  --red:#E24B4A;
+  --orange:#E8630A;
+  --navy:#0C2D5C;
+}
+body{background:var(--bg-secondary);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
+.app{display:flex;height:700px;width:1100px;max-width:100%;border:0.5px solid var(--border);border-radius:16px;overflow:hidden;background:var(--bg-primary);box-shadow:0 8px 40px rgba(0,0,0,0.08)}
+.sb{width:220px;border-right:0.5px solid var(--border);background:var(--bg-secondary);display:flex;flex-direction:column;flex-shrink:0}
+.sb-logo{padding:20px 16px 14px;border-bottom:0.5px solid var(--border)}
+.sb-mark{width:30px;height:30px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:6px}
+.sb-dot{width:10px;height:10px;border-radius:50%;background:#fff}
+.sb-name{font-size:15px;font-weight:500;color:var(--text-primary)}
+.sb-sub{font-size:11px;color:var(--text-tertiary);margin-top:1px}
+.sb-nav{padding:10px 8px;flex:1}
+.sb-lbl{font-size:10px;color:var(--text-tertiary);letter-spacing:.08em;text-transform:uppercase;padding:8px 10px 4px;font-weight:500}
+.sb-item{display:flex;align-items:center;gap:9px;padding:9px 10px;font-size:13px;color:var(--text-secondary);border-radius:8px;border:none;background:none;width:100%;text-align:left;cursor:pointer;margin-bottom:1px;transition:all .12s}
+.sb-item i{font-size:16px;flex-shrink:0}
+.sb-item:hover{background:var(--bg-primary);color:var(--text-primary)}
+.sb-item.active{background:var(--bg-primary);color:var(--blue);font-weight:500}
+.sb-bottom{padding:14px;border-top:0.5px solid var(--border);margin-top:auto}
+.av{width:30px;height:30px;border-radius:50%;background:#E6F1FB;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:var(--blue);flex-shrink:0}
+.u-name{font-size:12px;font-weight:500;color:var(--text-primary)}
+.u-sub{font-size:10px;color:var(--text-tertiary)}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg-tertiary)}
+.topbar{padding:14px 24px;background:var(--bg-primary);border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.t-title{font-size:16px;font-weight:500;color:var(--text-primary)}
+.t-pill{font-size:12px;padding:4px 12px;border-radius:99px;background:#EAF3DE;color:#3B6D11;border:0.5px solid #C0DD97}
+.body{padding:20px 24px;flex:1;overflow-y:auto}
+.section{display:none}.section.active{display:block}
+
+/* INICIO */
+.hero{background:linear-gradient(135deg,#0C2D5C 0%,#185FA5 100%);border-radius:14px;padding:22px;margin-bottom:18px;color:#fff}
+.hero-tag{font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
+.hero-title{font-size:20px;font-weight:500;margin-bottom:5px}
+.hero-sub{font-size:12px;color:rgba(255,255,255,.6);margin-bottom:18px}
+.avd{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center}
+.avd-card{background:rgba(255,255,255,.08);border:0.5px solid rgba(255,255,255,.12);border-radius:10px;padding:12px}
+.avd-lbl{font-size:9px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;font-weight:500}
+.avd-lbl.antes{color:rgba(255,100,100,.8)}
+.avd-lbl.despues{color:rgba(100,220,150,.8)}
+.avd-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;font-size:11px}
+.avd-key{color:rgba(255,255,255,.5)}
+.bad{color:#FF8080;font-weight:500}
+.good{color:#6ADFA0;font-weight:500}
+.avd-arrow{font-size:24px;color:rgba(255,255,255,.3);text-align:center}
+.avd-bot{margin-top:10px;padding-top:10px;border-top:0.5px solid rgba(255,255,255,.1)}
+.avd-val{font-size:20px;font-weight:500}
+.avd-val-lbl{font-size:10px;color:rgba(255,255,255,.5)}
+.mods{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+.mod{background:var(--bg-primary);border:0.5px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;transition:all .15s}
+.mod:hover{border-color:var(--blue);box-shadow:0 0 0 3px rgba(24,95,165,.07)}
+.mod-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;font-size:18px}
+.ic-b{background:#E6F1FB;color:var(--blue)}
+.ic-t{background:#E1F5EE;color:var(--teal)}
+.ic-a{background:#FAEEDA;color:var(--amber)}
+.mod-title{font-size:13px;font-weight:500;color:var(--text-primary);margin-bottom:3px}
+.mod-desc{font-size:11px;color:var(--text-secondary);line-height:1.5;margin-bottom:8px}
+.mod-time{font-size:10px;color:var(--text-tertiary);background:var(--bg-secondary);padding:2px 7px;border-radius:99px;display:inline-block}
+.prog-card{background:var(--bg-primary);border:0.5px solid var(--border);border-radius:12px;padding:16px}
+.prog-title{font-size:13px;font-weight:500;color:var(--text-primary);margin-bottom:2px}
+.prog-sub{font-size:11px;color:var(--text-tertiary);margin-bottom:12px}
+.pr{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.pr-lbl{font-size:11px;color:var(--text-secondary);width:130px;flex-shrink:0}
+.pr-wrap{flex:1;height:6px;background:var(--bg-secondary);border-radius:3px;overflow:hidden}
+.pr-bar{height:100%;border-radius:3px}
+.pr-pct{font-size:11px;font-weight:500;color:var(--text-secondary);width:32px;text-align:right}
+
+/* TDR */
+.upload{border:1.5px dashed var(--border);border-radius:12px;padding:28px;text-align:center;margin-bottom:14px;cursor:pointer;background:var(--bg-primary);transition:all .15s}
+.upload:hover{background:var(--bg-secondary)}
+.up-icon{font-size:26px;color:var(--text-tertiary);margin-bottom:6px}
+.up-title{font-size:13px;font-weight:500;color:var(--text-primary);margin-bottom:2px}
+.up-sub{font-size:11px;color:var(--text-tertiary)}
+.res-card{background:var(--bg-primary);border:0.5px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px}
+.rh{display:flex;align-items:center;justify-content:space-between;padding-bottom:8px;border-bottom:0.5px solid var(--border);margin-bottom:8px}
+.rh-t{font-size:13px;font-weight:500;color:var(--text-primary)}
+.tag{font-size:10px;padding:2px 8px;border-radius:99px;font-weight:500}
+.tg{background:#EAF3DE;color:#3B6D11}
+.tb{background:#E6F1FB;color:var(--blue)}
+.rr{display:flex;gap:8px;padding:4px 0;border-bottom:0.5px solid var(--bg-secondary)}
+.rr:last-child{border:none}
+.rk{font-size:11px;color:var(--text-tertiary);width:130px;flex-shrink:0}
+.rv{font-size:11px;color:var(--text-primary);font-weight:500}
+
+/* CALC */
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.fl{display:flex;flex-direction:column;gap:5px}
+.fl label{font-size:11px;font-weight:500;color:var(--text-secondary)}
+.fl input{padding:9px 12px;border:0.5px solid #d3d1c7;border-radius:8px;font-size:13px;color:var(--text-primary);background:var(--bg-primary)}
+.fl input:focus{outline:none;border-color:var(--blue)}
+.sem{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.sc{border-radius:10px;padding:14px;border:0.5px solid var(--border)}
+.sc-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.06em;font-weight:500;margin-bottom:5px}
+.sc-val{font-size:18px;font-weight:500}
+
+/* DOCS */
+.doc-list{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}
+.di{display:flex;align-items:center;gap:10px;padding:11px 13px;border:0.5px solid var(--border);border-radius:10px;background:var(--bg-primary)}
+.dc{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;font-weight:500}
+.dok{background:#EAF3DE;color:#3B6D11}
+.dwa{background:#FAEEDA;color:#854F0B}
+.dno{background:#FCEBEB;color:#A32D2D}
+.di-info{flex:1}
+.di-n{font-size:12px;font-weight:500;color:var(--text-primary)}
+.di-d{font-size:10px;color:var(--text-tertiary)}
+.di-d.w{color:#854F0B}.di-d.r{color:#A32D2D}
+.acts{display:flex;gap:8px}
+.btn-p{padding:10px 18px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px}
+.btn-p:hover{background:#0C447C}
+.btn-s{padding:9px 14px;background:var(--bg-primary);color:var(--text-primary);border:0.5px solid #d3d1c7;border-radius:8px;font-size:12px;cursor:pointer}
+
+/* FOOTER */
+.page-footer{text-align:center;padding:12px;font-size:10px;color:var(--text-tertiary);border-top:0.5px solid var(--border);background:var(--bg-primary);flex-shrink:0}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="sb">
+    <div class="sb-logo">
+      <div class="sb-mark"><div class="sb-dot"></div></div>
+      <div class="sb-name">MYPElink</div>
+      <div class="sb-sub">Propuestas al Estado</div>
+    </div>
+    <div class="sb-nav">
+      <div class="sb-lbl">Principal</div>
+      <button class="sb-item active" onclick="show('inicio',this)"><i class="ti ti-home"></i>Inicio</button>
+      <div class="sb-lbl">Módulos</div>
+      <button class="sb-item" onclick="show('tdr',this)"><i class="ti ti-file-text"></i>Lector de TDR</button>
+      <button class="sb-item" onclick="show('calc',this)"><i class="ti ti-calculator"></i>Calculadora</button>
+      <button class="sb-item" onclick="show('docs',this)"><i class="ti ti-folder"></i>Documentos</button>
+    </div>
+    <div class="sb-bottom">
+      <div style="display:flex;align-items:center;gap:9px">
+        <div class="av">CG</div>
+        <div><div class="u-name">Carlos García</div><div class="u-sub">García Textil E.I.R.L.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <span class="t-title" id="pg-title">Inicio</span>
+      <span class="t-pill">● Propuesta en curso</span>
+    </div>
+    <div class="body">
+
+      <div class="section active" id="s-inicio">
+        <div class="hero">
+          <div class="hero-tag">MYPElink · Sistema RPA · ULima 2026 · Grupo 4</div>
+          <div class="hero-title">Bienvenido, Carlos García 👋</div>
+          <div class="hero-sub">Tu propuesta al Estado, de 31.8 horas a 2 horas.</div>
+          <div class="avd">
+            <div class="avd-card">
+              <div class="avd-lbl antes">⚠ Sin MYPElink</div>
+              <div class="avd-row"><span class="avd-key">Leer TDR</span><span class="bad">4–5 hrs</span></div>
+              <div class="avd-row"><span class="avd-key">Calcular propuesta</span><span class="bad">5–7 hrs</span></div>
+              <div class="avd-row"><span class="avd-key">Reunir documentos</span><span class="bad">3–5 hrs</span></div>
+              <div class="avd-row"><span class="avd-key">Cotizar insumos</span><span class="bad">8–16 hrs</span></div>
+              <div class="avd-row"><span class="avd-key">Armar expediente</span><span class="bad">5–7 hrs</span></div>
+              <div class="avd-bot"><div class="avd-val" style="color:#FF8080">31.8 hrs</div><div class="avd-val-lbl">promedio por propuesta</div></div>
+            </div>
+            <div class="avd-arrow">→</div>
+            <div class="avd-card">
+              <div class="avd-lbl despues">✓ Con MYPElink</div>
+              <div class="avd-row"><span class="avd-key">Leer TDR</span><span class="good">30 min</span></div>
+              <div class="avd-row"><span class="avd-key">Calcular propuesta</span><span class="good">20 min</span></div>
+              <div class="avd-row"><span class="avd-key">Reunir documentos</span><span class="good">15 min</span></div>
+              <div class="avd-row"><span class="avd-key">Cotizar insumos</span><span class="good">15 min</span></div>
+              <div class="avd-row"><span class="avd-key">Armar expediente</span><span class="good">Automático</span></div>
+              <div class="avd-bot"><div class="avd-val">~2 hrs</div><div class="avd-val-lbl">reducción del 85–90%</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="mods">
+          <div class="mod" onclick="show('tdr',document.querySelectorAll('.sb-item')[1])">
+            <div class="mod-icon ic-b"><i class="ti ti-file-text"></i></div>
+            <div class="mod-title">Lector de TDR</div>
+            <div class="mod-desc">Lee y resume automáticamente las bases del proceso licitatorio.</div>
+            <div class="mod-time">5 hrs → 30 min</div>
+          </div>
+          <div class="mod" onclick="show('calc',document.querySelectorAll('.sb-item')[2])">
+            <div class="mod-icon ic-t"><i class="ti ti-calculator"></i></div>
+            <div class="mod-title">Calculadora económica</div>
+            <div class="mod-desc">Calcula IGV, utilidad y verifica topes OECE en tiempo real.</div>
+            <div class="mod-time">7 hrs → 20 min</div>
+          </div>
+          <div class="mod" onclick="show('docs',document.querySelectorAll('.sb-item')[3])">
+            <div class="mod-icon ic-a"><i class="ti ti-folder"></i></div>
+            <div class="mod-title">Gestor documental</div>
+            <div class="mod-desc">Alertas de vencimiento y ensamblado automático del expediente.</div>
+            <div class="mod-time">5 hrs → 15 min</div>
+          </div>
+        </div>
+        <div class="prog-card">
+          <div class="prog-title">Propuesta en curso — LP-0042-2026</div>
+          <div class="prog-sub">Ministerio de Educación · Uniformes escolares · S/ 480,000</div>
+          <div class="pr"><span class="pr-lbl">Lectura TDR</span><div class="pr-wrap"><div class="pr-bar" style="width:100%;background:#185FA5"></div></div><span class="pr-pct">100%</span></div>
+          <div class="pr"><span class="pr-lbl">Propuesta económica</span><div class="pr-wrap"><div class="pr-bar" style="width:80%;background:#1D9E75"></div></div><span class="pr-pct">80%</span></div>
+          <div class="pr"><span class="pr-lbl">Documentos</span><div class="pr-wrap"><div class="pr-bar" style="width:75%;background:#BA7517"></div></div><span class="pr-pct">75%</span></div>
+          <div class="pr"><span class="pr-lbl">Envío PLADICOP</span><div class="pr-wrap"><div class="pr-bar" style="width:0%;background:#C8C7C0"></div></div><span class="pr-pct">0%</span></div>
+        </div>
+      </div>
+
+      <div class="section" id="s-tdr">
+        <div class="upload" onclick="simTDR()">
+          <div class="up-icon"><i class="ti ti-upload"></i></div>
+          <div class="up-title">Subir TDR en PDF</div>
+          <div class="up-sub">El sistema lo lee y resume automáticamente · máx. 50 MB</div>
+        </div>
+        <div id="tdr-res" style="display:none">
+          <div class="res-card">
+            <div class="rh"><span class="rh-t">Resumen automático — LP-0042-2026</span><span class="tag tg">✓ Procesado en 2 min</span></div>
+            <div class="rr"><span class="rk">Entidad</span><span class="rv">Ministerio de Educación</span></div>
+            <div class="rr"><span class="rk">Objeto</span><span class="rv">Uniformes escolares</span></div>
+            <div class="rr"><span class="rk">Valor referencial</span><span class="rv">S/ 480,000</span></div>
+            <div class="rr"><span class="rk">Fecha límite</span><span class="rv">18 jun 2026 — quedan 6 días hábiles</span></div>
+            <div class="rr"><span class="rk">Docs. requeridos</span><span class="rv">12 documentos obligatorios</span></div>
+            <div class="rr"><span class="rk">Factor clave</span><span class="rv">Experiencia en el objeto + plazo de entrega</span></div>
+          </div>
+          <div class="res-card">
+            <div class="rh"><span class="rh-t">Requisitos mínimos detectados</span><span class="tag tb">OECE v2.0</span></div>
+            <div class="rr"><span class="rk">RNP vigente</span><span class="rv">Sí, obligatorio</span></div>
+            <div class="rr"><span class="rk">Cap. financiera</span><span class="rv">Facturación mín. S/ 240,000 — últimos 3 años</span></div>
+            <div class="rr"><span class="rk">Experiencia</span><span class="rv">Mín. 1 contrato similar — últimos 5 años</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" id="s-calc">
+        <div class="calc-grid">
+          <div class="fl"><label>Costo directo (S/)</label><input type="number" id="cd" value="320000" oninput="calcular()"></div>
+          <div class="fl"><label>Utilidad (%)</label><input type="number" id="ut" value="12" oninput="calcular()"></div>
+          <div class="fl"><label>Gastos generales (%)</label><input type="number" id="gg" value="8" oninput="calcular()"></div>
+          <div class="fl"><label>IGV (%)</label><input type="number" id="igv" value="18" oninput="calcular()"></div>
+        </div>
+        <div class="sem">
+          <div class="sc" style="background:#E6F1FB;border-color:#B5D4F4"><div class="sc-lbl" style="color:#185FA5">Subtotal sin IGV</div><div class="sc-val" id="sub" style="color:#0C447C">S/ 403,200</div></div>
+          <div class="sc" style="background:#E1F5EE;border-color:#9FE1CB"><div class="sc-lbl" style="color:#0F6E56">Total con IGV</div><div class="sc-val" id="tot" style="color:#085041">S/ 475,776</div></div>
+          <div class="sc" id="sema" style="background:#EAF3DE;border-color:#C0DD97"><div class="sc-lbl" id="sema-lbl" style="color:#3B6D11">Estado OECE</div><div class="sc-val" id="sema-val" style="color:#27500A">✓ Dentro</div></div>
+        </div>
+        <div class="prog-card">
+          <div class="prog-title">Desglose de la propuesta</div>
+          <div class="prog-sub">Composición porcentual del precio ofertado</div>
+          <div class="pr"><span class="pr-lbl">Costo directo</span><div class="pr-wrap"><div class="pr-bar" id="b1" style="width:67%;background:#185FA5"></div></div><span class="pr-pct" id="p1">67%</span></div>
+          <div class="pr"><span class="pr-lbl">Gastos generales</span><div class="pr-wrap"><div class="pr-bar" id="b2" style="width:8%;background:#1D9E75"></div></div><span class="pr-pct" id="p2">8%</span></div>
+          <div class="pr"><span class="pr-lbl">Utilidad</span><div class="pr-wrap"><div class="pr-bar" id="b3" style="width:12%;background:#BA7517"></div></div><span class="pr-pct" id="p3">12%</span></div>
+          <div class="pr"><span class="pr-lbl">IGV</span><div class="pr-wrap"><div class="pr-bar" id="b4" style="width:13%;background:#E24B4A"></div></div><span class="pr-pct" id="p4">13%</span></div>
+        </div>
+      </div>
+
+      <div class="section" id="s-docs">
+        <div class="doc-list">
+          <div class="di"><div class="dc dok"><i class="ti ti-check"></i></div><div class="di-info"><div class="di-n">RNP vigente</div><div class="di-d">Vence: 15 dic 2026</div></div><span class="tag tg">Listo</span></div>
+          <div class="di"><div class="dc dok"><i class="ti ti-check"></i></div><div class="di-info"><div class="di-n">Ficha RUC activo</div><div class="di-d">Actualizado automáticamente</div></div><span class="tag tg">Listo</span></div>
+          <div class="di"><div class="dc dok"><i class="ti ti-check"></i></div><div class="di-info"><div class="di-n">Declaración jurada</div><div class="di-d">Generada por el sistema</div></div><span class="tag tg">Listo</span></div>
+          <div class="di"><div class="dc dok"><i class="ti ti-check"></i></div><div class="di-info"><div class="di-n">Propuesta técnica</div><div class="di-d">Completada</div></div><span class="tag tg">Listo</span></div>
+          <div class="di"><div class="dc dok"><i class="ti ti-check"></i></div><div class="di-info"><div class="di-n">Propuesta económica</div><div class="di-d">Generada por calculadora</div></div><span class="tag tg">Listo</span></div>
+          <div class="di"><div class="dc dwa"><i class="ti ti-clock"></i></div><div class="di-info"><div class="di-n">Carta de presentación</div><div class="di-d w">Vence en 3 días — requiere firma</div></div><span class="tag" style="background:#FAEEDA;color:#854F0B">Por vencer</span></div>
+          <div class="di"><div class="dc dwa"><i class="ti ti-clock"></i></div><div class="di-info"><div class="di-n">Constancia de experiencia</div><div class="di-d w">En proceso</div></div><span class="tag" style="background:#FAEEDA;color:#854F0B">En proceso</span></div>
+          <div class="di"><div class="dc dno"><i class="ti ti-x"></i></div><div class="di-info"><div class="di-n">Garantía de seriedad</div><div class="di-d r">Pendiente — acudir al banco</div></div><span class="tag" style="background:#FCEBEB;color:#A32D2D">Pendiente</span></div>
+          <div class="di"><div class="dc dno"><i class="ti ti-x"></i></div><div class="di-info"><div class="di-n">Anexo factores facultativos</div><div class="di-d r">Pendiente — completar</div></div><span class="tag" style="background:#FCEBEB;color:#A32D2D">Pendiente</span></div>
+        </div>
+        <div class="acts">
+          <button class="btn-p"><i class="ti ti-download" style="font-size:14px"></i>Ensamblar propuesta</button>
+          <button class="btn-s">Ver estado PLADICOP</button>
+        </div>
+      </div>
+
+    </div>
+    <div class="page-footer">MYPElink · Grupo 4 · Sección 1089 · Introducción a la Ingeniería · Universidad de Lima 2026</div>
+  </div>
+</div>
+
+<script>
+const titles={inicio:'Inicio',tdr:'Lector de TDR',calc:'Calculadora económica',docs:'Gestor documental'};
+function show(id,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(b=>b.classList.remove('active'));
+  document.getElementById('s-'+id).classList.add('active');
+  if(btn)btn.classList.add('active');
+  document.getElementById('pg-title').textContent=titles[id]||id;
+}
+function simTDR(){document.getElementById('tdr-res').style.display='block'}
+function calcular(){
+  const cd=+document.getElementById('cd').value||0;
+  const ut=+document.getElementById('ut').value||0;
+  const gg=+document.getElementById('gg').value||0;
+  const igv=+document.getElementById('igv').value||0;
+  const sub=cd*(1+gg/100+ut/100);
+  const tot=sub*(1+igv/100);
+  const tope=480000;
+  document.getElementById('sub').textContent='S/ '+Math.round(sub).toLocaleString();
+  document.getElementById('tot').textContent='S/ '+Math.round(tot).toLocaleString();
+  const ok=tot<=tope;
+  const sm=document.getElementById('sema');
+  sm.style.background=ok?'#EAF3DE':'#FCEBEB';
+  sm.style.borderColor=ok?'#C0DD97':'#F7C1C1';
+  document.getElementById('sema-lbl').style.color=ok?'#3B6D11':'#A32D2D';
+  document.getElementById('sema-val').style.color=ok?'#27500A':'#791F1F';
+  document.getElementById('sema-val').textContent=ok?'✓ Dentro':'✗ Excede';
+  const t=tot||1;
+  const igvAmt=tot-sub;
+  [['b1','p1',cd],['b2','p2',cd*gg/100],['b3','p3',cd*ut/100],['b4','p4',igvAmt]].forEach(([bid,pid,val])=>{
+    document.getElementById(bid).style.width=Math.round(val/t*100)+'%';
+    document.getElementById(pid).textContent=Math.round(val/t*100)+'%';
+  });
+}
+</script>
+</body>
+</html>
